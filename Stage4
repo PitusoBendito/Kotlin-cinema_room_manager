@@ -1,0 +1,73 @@
+package cinema
+
+fun showSeats(seats: MutableList<MutableList<String>>, seat: Int, row: Int) {
+    println("Cinema:")
+    for (i in 1..seat) print(" $i")
+    print("\n")
+    for (i in 1..row) {
+        print("$i ")
+        for (j in 1..seat) print(seats[i-1][j-1] + " ")
+        print("\n")
+    }
+}
+
+fun buyTicket(seats: MutableList<MutableList<String>>, seat: Int, row: Int) {
+    println("Enter a row number:")
+    val ownRow: Int = readln().toInt()
+    println("Enter a seat number in that row:")
+    val ownSeat: Int = readln().toInt()
+
+    seats[ownRow-1][ownSeat-1] = "B"
+    println("Cinema:")
+    for (i in 1..seat) print(" $i")
+    print("\n")
+    for (i in 1..row) {
+        print("$i ")
+        for (j in 1..seat) print(seats[i-1][j-1] + " ")
+        print("\n")
+    }
+
+    if (row * seat <= 60) {
+        println("Ticket price: $$priceFront")
+    } else {
+        if (row % 2 == 0) {
+            if (ownRow <= row / 2) {
+                println("Ticket price: $$priceFront")
+            } else {
+                println("Ticket price: $$priceBack")
+            }
+        } else {
+            if (ownRow <= row / 2) {
+                println("Ticket price: $$priceFront")
+            } else {
+                println("Ticket price: $$priceBack")
+            }
+        }
+    }
+}
+
+
+const val priceFront = 10
+const val priceBack = 8
+
+fun main() {
+
+    println("Enter the number of rows:")
+    val row: Int = readln().toInt()
+    println("Enter the number of seats in each rows:")
+    val seat: Int = readln().toInt()
+    val seats = MutableList(row){MutableList(seat){"S"}}
+
+    var end = 0
+
+    while (end == 0) {
+        println("1. Show the seats")
+        println("2. Buy a ticket")
+        println("0. Exit")
+        when (readln().toInt()) {
+            1 -> showSeats(seats, seat, row)
+            2 -> buyTicket(seats, seat, row)
+            0 -> end++
+        }
+    }
+}
