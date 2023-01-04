@@ -1,0 +1,131 @@
+package cinema
+
+const val priceFront = 10
+const val priceBack = 8
+
+fun main() {
+    println("Enter the number of rows:")
+    val row: Int = readln().toInt()
+    println("Enter the number of seats in each rows:")
+    val seat: Int = readln().toInt()
+    val seats = MutableList(row){MutableList(seat){"S"}}
+    menu(seats, row, seat, 0,0, 0)
+}
+
+fun menu(seats: MutableList<MutableList<String>>, row: Int, seat: Int, soldTickets: Int, soldFront: Int, soldBack: Int) {
+    println("")
+    println("1. Show the seats")
+    println("2. Buy a ticket")
+    println("3. Statistics")
+    println("0. Exit")
+    val command = readln().toInt()
+    while (command != 0) {
+        when (command) {
+            1 -> showSeats(seats, row, seat, soldTickets, soldFront, soldBack)
+            2 -> buyTicket(seats, row, seat, soldTickets, soldFront, soldBack)
+            3 -> statistics(seats, row, seat, soldTickets, soldFront, soldBack)
+        }
+    }
+}
+
+fun showSeats(seats: MutableList<MutableList<String>>, row: Int, seat: Int, soldTickets: Int, soldFront: Int, soldBack: Int) {
+    println("")
+    println("Cinema:")
+    for (i in 1..seat) {
+        print(" $i")
+    }
+    print("\n")
+    for (i in 1..row) {
+        print("$i ")
+        for (j in 1..seat) {
+            print(seats[i-1][j-1] + " ")
+        }
+        print("\n")
+    }
+    menu(seats, row, seat, soldTickets, soldFront, soldBack)
+}
+
+fun buyTicket(seats: MutableList<MutableList<String>>, row: Int, seat: Int, soldTickets: Int, soldFront: Int, soldBack: Int) {
+    var soldTickets = soldTickets
+    var soldFront = soldFront
+    var soldBack = soldBack
+    println("")
+    println("Enter a row number:")
+    val ownRow: Int = readln().toInt()
+    println("Enter a seat number in that row:")
+    val ownSeat: Int = readln().toInt()
+
+    if (ownRow > row || ownSeat > seat) {
+        println("Wrong input!")
+        return
+    }
+
+    if (seats[ownRow-1][ownSeat-1] == "S") {
+        seats[ownRow-1][ownSeat-1] = "B"
+    } else {
+        println("That ticket has already been purchased!")
+        return
+    }
+
+    println("Cinema:")
+    for (i in 1..seat) print(" $i")
+    print("\n")
+    for (i in 1..row) {
+        print("$i ")
+        for (j in 1..seat) print(seats[i-1][j-1] + " ")
+        print("\n")
+    }
+
+    if (row * seat <= 60) {
+        println("Ticket price: $$priceFront")
+        soldTickets++
+    } else {
+        if (row % 2 == 0) {
+            if (ownRow <= row / 2) {
+                println("Ticket price: $$priceFront")
+                soldFront++
+            } else {
+                println("Ticket price: $$priceBack")
+                soldBack++
+            }
+        } else {
+            if (ownRow <= row / 2) {
+                println("Ticket price: $$priceFront")
+                soldFront++
+            } else {
+                println("Ticket price: $$priceBack")
+                soldBack++
+            }
+        }
+    }
+    soldTickets = soldFront + soldBack
+    menu(seats, row, seat, soldTickets, soldFront, soldBack)
+}
+
+fun statistics(seats: MutableList<MutableList<String>>, row: Int, seat: Int, soldTickets: Int, soldFront: Int, soldBack: Int) {
+    val soldTickets = soldTickets
+    val soldFront = soldFront
+    val soldBack = soldBack
+    println("")
+    println("Number of purchased tickets: $soldTickets")
+
+    val totalTickets: Float = (seat * row).toFloat()
+    val percentage: Float = soldTickets.toFloat() / totalTickets * 100
+    val percentageTickets = "%.2f".format(percentage)
+    println("Percentage: $percentageTickets%")
+
+    val income = soldFront * priceFront + soldBack * priceBack
+    println("Current income: $$income")
+
+    val totalIncome = if (row * seat <= 60) {
+        row * seat * priceFront
+    } else {
+        if (row % 2 == 0) {
+            row / 2 * seat * (priceFront + priceBack)
+        } else {
+            (row / 2) * seat * priceFront + (row / 2 + 1) * seat * priceBack
+        }
+    }
+    println("Total income: $$totalIncome")
+    menu(seats, row, seat, soldTickets, soldFront, soldBack)
+}
